@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Chhootganit — discount card</title>
+<meta name="description" content="Chhootganit turns a haggle into real numbers: how many more units you must sell to keep total profit after a discount. Prints a threshold card for the counter.">
+<style>
+  :root{--bg:#f8f4ef;--card:#fff;--ink:#241a10;--muted:#6a5844;--brand:#b2662e;--brand-ink:#7c4419;--line:#ecdfd1;--accent:#f5ebdd}
+  @media (prefers-color-scheme:dark){:root{--bg:#15110c;--card:#1e1811;--ink:#efe5d7;--muted:#b6a48c;--brand:#d68a52;--brand-ink:#efceac;--line:#2b2318;--accent:#241c12}}
+  *{box-sizing:border-box}html,body{margin:0}
+  body{background:var(--bg);color:var(--ink);font:16px/1.55 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+  .wrap{max-width:960px;margin:0 auto;padding:0 20px}
+  header{padding:64px 0 24px;text-align:center}
+  .eyebrow{color:var(--brand);font-weight:700;letter-spacing:.08em;text-transform:uppercase;font-size:13px}
+  h1{font-size:44px;margin:.2em 0 .1em;letter-spacing:-.02em}
+  .tag{color:var(--muted);font-size:19px;max-width:640px;margin:8px auto 0}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin:28px 0}
+  @media (max-width:760px){.grid{grid-template-columns:1fr}h1{font-size:34px}}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:22px}
+  .card h2{margin:0 0 8px;font-size:20px}
+  label{display:block;font-size:13px;color:var(--muted);margin:8px 0 4px}
+  input{width:100%;padding:9px 12px;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink);font-size:15px}
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  table{width:100%;border-collapse:collapse;margin-top:14px}
+  th,td{text-align:left;padding:8px 6px;border-bottom:1px dashed var(--line);font-size:15px}
+  td.r,th.r{text-align:right;font-weight:700;color:var(--brand-ink)}
+  .no{color:#c0392b}
+  footer{color:var(--muted);font-size:13px;text-align:center;padding:40px 0}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="eyebrow">Chhootganit · छूट गणित</div>
+    <h1>What a discount really costs</h1>
+    <p class="tag">Grant 5% off and you don't lose 5% — you lose a slice of margin that only more volume
+      can recover. Chhootganit prints the exact extra units for each discount, to keep at the counter.</p>
+  </header>
+  <div class="grid">
+    <div class="card">
+      <h2>Your threshold card</h2>
+      <div class="two">
+        <div><label>Selling price ₹</label><input id="price" type="number" value="100"></div>
+        <div><label>Profit per unit ₹</label><input id="profit" type="number" value="20"></div>
+      </div>
+      <table>
+        <thead><tr><th>Discount</th><th class="r">Extra units to sell</th></tr></thead>
+        <tbody id="body"></tbody>
+      </table>
+    </div>
+    <div class="card">
+      <h2>Nobody types mid-haggle</h2>
+      <p style="color:var(--muted)">Discounts get granted on gut feel under pressure; the required extra
+        volume is invisible. Prepare the card once and keep it by the till — the answer is already there
+        when the customer pushes.</p>
+      <p style="color:var(--muted)">Extra units % = profit ÷ (profit − discount) − 1. If the discount
+        meets the margin, no volume recovers it.</p>
+      <p style="color:var(--muted);font-size:14px">Flutter → Go → PostgreSQL.</p>
+    </div>
+  </div>
+  <footer>Chhootganit · a local-first shopkeeper tool · offline, no account.</footer>
+</div>
+<script>
+  const $=id=>document.getElementById(id);
+  const discounts=[2,5,10,15,20,25];
+  function render(){
+    const price=+$('price').value||0, profit=+$('profit').value||0;
+    $('body').innerHTML=discounts.map(d=>{
+      const off=price*d/100, np=profit-off;
+      const cell = np>0 ? '+'+((profit/np-1)*100).toFixed(1)+'%' : '<span class="no">impossible</span>';
+      return `<tr><td>${d}%</td><td class="r">${cell}</td></tr>`;
+    }).join('');
+  }
+  document.querySelectorAll('input').forEach(el=>el.addEventListener('input',render)); render();
+</script>
+</body>
+</html>
